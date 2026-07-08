@@ -9,7 +9,7 @@ from logic import (
 )
 
 app = Flask(__name__)
-app.secret_key = "change-me-for-production"
+app.secret_key = os.environ.get("SECRET_KEY", "change-me-for-production")
 
 
 @app.route("/reset")
@@ -224,4 +224,5 @@ def index():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "5000"))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    debug = os.environ.get("DEBUG", "false").lower() in {"1", "true", "yes"}
+    app.run(debug=debug, host="0.0.0.0", port=port)

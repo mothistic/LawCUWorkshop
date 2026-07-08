@@ -36,3 +36,14 @@ Run tests:
 pip install pytest
 pytest -q
 ```
+
+Deploy to Railway:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+railway login
+railway init
+railway up
+```
+
+If Railway asks for a project name, choose one that matches your app.
