@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thai Conflict-of-Laws Checker</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <div class="header">
+            <div class="logo">⚖︎</div>
+            <h1>Thai Conflict-of-Laws Checker</h1>
+            <p class="lead">A step-by-step tool for simplified contract law choice under Thailand's Act on Conflict of Laws.</p>
+          </div>
+        </div>
+
+        {% if step > 0 and question_history %}
+          <div class="history">
+            <h2>Previous questions and answers</h2>
+            <ol>
+              {% for question, answer in question_history %}
+                <li><strong>{{ question }}</strong><br><span>{{ answer }}</span></li>
+              {% endfor %}
+            </ol>
+          </div>
+        {% endif %}
+
+        {% if error %}
+          <div class="result bad">Error: {{ error }}</div>
+        {% endif %}
+
+        <form id="law-form" method="post">
+          <input type="hidden" name="step" value="{{ step }}">
+
+          {% if step == 0 %}
+            <div class="row">
+              <label>Does the contract specify which country's law to use?
+                <input type="text" name="explicit_law" value="{{ explicit_law }}" placeholder="Country or N">
+              </label>
+            </div>
+          {% elif step == 1 %}
+            <div class="row">
+              <label>Do you know which nationality should be used for Party 1?
+                <input type="text" name="party1_country" value="{{ party1_country }}" placeholder="Country or N">
+              </label>
+            </div>
+          {% elif step == 2 %}
+            <div class="row">
+              <label>Do you know which nationality should be used for Party 2?
+                <input type="text" name="party2_country" value="{{ party2_country }}" placeholder="Country or N">
+              </label>
+            </div>
+          {% elif step == 3 %}
+            <div class="row">
+              <label>Is Party 2 a natural person or a juristic person?
+                <input type="text" name="party2_person_type" value="{{ party2_person_type }}" placeholder="natural or juristic">
+              </label>
+            </div>
+          {% elif step == 4 %}
+            {% if party2_person_type == 'natural' %}
+              <div class="row">
+                <label>List all countries of nationality for Party 2, separated by commas:
+                  <input type="text" name="party2_nationalities" value="{{ party2_nationalities }}" placeholder="Philippines, Cambodia">
+                </label>
+              </div>
+              <div class="row">
+                <label>Which nationality(ies) were last acquired?
+                  <input type="text" name="party2_last_acquired" value="{{ party2_last_acquired }}" placeholder="Philippines, Cambodia">
+                </label>
+              </div>
+              <div class="row">
+                <label>Where is Party 2 domiciled?
+                  <input type="text" name="party2_domicile" value="{{ party2_domicile }}" placeholder="Cambodia">
+                </label>
+              </div>
+            {% else %}
+              <div class="row">
+                <label>Where is the principal office or establishment of Party 2?
+                  <input type="text" name="party2_principal_office" value="{{ party2_principal_office }}" placeholder="Singapore">
+                </label>
+              </div>
+            {% endif %}
+          {% elif step == 5 %}
+            <div class="row">
+              <label>Where was the contract made?
+                <input type="text" name="contract_place" value="{{ contract_place }}" placeholder="Malaysia">
+              </label>
+            </div>
+          {% endif %}
+
+          <div class="actions">
+            {% if step < 5 %}
+              <button type="submit">Next</button>
+            {% else %}
+              <button type="submit">Determine applicable law</button>
+            {% endif %}
+            <button type="button" class="secondary" onclick="window.location.href='/reset'">Reset</button>
+          </div>
+        </form>
+
+        {% if person_nationality_message %}
+          <div class="result ok">
+            {{ person_nationality_message }}
+          </div>
+        {% endif %}
+        {% if result %}
+          <div class="result ok">
+            {{ result.message }}
+          </div>
+        {% endif %}
+
+        <div class="foot">Educational demo only — not legal advice.</div>
+      </div>
+    </div>
+
+  </body>
+</html>
